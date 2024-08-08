@@ -1,0 +1,51 @@
+/* Header.css */
+
+.header {
+    background-color: white;
+    padding: 10px 20px;
+    color: #DDDDDD;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Distribute space between logo and nav */
+    border-bottom: 1px solid #e0e0e0; /* Optional: adds a subtle border */
+    position:fixed,
+      }
+  
+  .logo img {
+    width: 100px;
+    height: auto; /* Maintain aspect ratio */
+  }
+  
+  .nav-container {
+    display: flex;
+    justify-content: flex-end; /* Align nav to the right */
+    width: 100%;
+  }
+  
+  nav {
+    display: flex;
+  }
+  
+  .nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+  }
+  
+  .nav-list li {
+    margin: 0 15px;
+  }
+  
+  .nav-link {
+    text-decoration: none;
+    color: #C7C8CC;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: color 0.3s ease;
+  }
+  
+  .nav-link:hover {
+    color: #61dafb; /* Light blue color on hover */
+  }
+  
