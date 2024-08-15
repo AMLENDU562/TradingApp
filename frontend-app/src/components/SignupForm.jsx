@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-
+import { useNavigate } from 'react-router-dom';
 const SignUpForm = () => {
+  const Navigate=useNavigate();
   const [formData, setFormData] = useState({
     name: '',
     password: '',
     email: '',
     sponsorId: '',
-    sponsorMobile: '',
-    packageOption: '',
+    mobileNumber: '',
+    packages: '',
     termsAccepted: false,
     hasAccount: false
   });
@@ -21,21 +22,40 @@ const SignUpForm = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission logic here, e.g., send data to backend or perform validation
-    console.log(formData);
-    // Reset form fields after submission if needed
-    setFormData({
-      name: '',
-      password: '',
-      email: '',
-      sponsorId: '',
-      sponsorMobile: '',
-      packageOption: '',
-      termsAccepted: false,
-      hasAccount: false
-    });
+
+    
+    try {
+      const response = await fetch('http://localhost:8080/api/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Success:', result);
+        Navigate('/login')
+        // Optionally reset the form fields after successful submission
+        setFormData({
+          name: '',
+          password: '',
+          email: '',
+          sponsorId: '',
+          mobileNumber: '',
+          packages: '',
+          termsAccepted: false,
+          hasAccount: false
+        });
+      } else {
+        console.error('Error:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
   };
 
   return (
@@ -87,32 +107,32 @@ const SignUpForm = () => {
           <label htmlFor="sponsorMobile">Mobile Number</label>
           <input
             type="tel"
-            id="sponsorMobile"
-            name="sponsorMobile"
+            id="mobileNumber"
+            name="mobileNumber"
             value={formData.sponsorMobile}
             onChange={handleChange}
             required
           />
 
-            <label htmlFor="packageOption" style={{ display: "block", textAlign: "left", margin: "10px 0 5px" }}>Packages</label>
-            <select
-            id="packageOption"
-            name="packageOption"
+          <label htmlFor="packageOption" style={{ display: "block", textAlign: "left", margin: "10px 0 5px" }}>Packages</label>
+          <select
+            id="packages"
+            name="packages"
             value={formData.packageOption}
             onChange={handleChange}
             required
             style={{
-                width: "100%",
-                padding: "10px",
-                marginBottom: "20px",
-                border: "1px solid #ccc",
-                borderRadius: "4px",
-                backgroundColor: "#fff",
-                textAlign: "left",
-                fontSize: "16px",
-                cursor: "pointer"
+              width: "100%",
+              padding: "10px",
+              marginBottom: "20px",
+              border: "1px solid #ccc",
+              borderRadius: "4px",
+              backgroundColor: "#fff",
+              textAlign: "left",
+              fontSize: "16px",
+              cursor: "pointer"
             }}
-            >
+          >
             <option value="" disabled>Select a package option</option>
             <option value="10">10</option>
             <option value="25">25</option>
@@ -122,26 +142,24 @@ const SignUpForm = () => {
             <option value="500">500</option>
             <option value="1000">1000</option>
             <option value="5000">5000</option>
-            </select>
+          </select>
 
-          <div style={{ display: "flex", alignItems: "center", marginBottom: "20px",columnCount:2 }}>
-                <input
-                    type="checkbox"
-                    id="termsAccepted"
-                    name="termsAccepted"
-                    checked={formData.termsAccepted}
-                    onChange={handleChange}
-                    required
-                    style={{ width:"30px",margin:"0px" }}
-                />
-                <label htmlFor="termsAccepted">I accept the terms and conditions</label>
-        </div>
-
+          <div style={{ display: "flex", alignItems: "center", marginBottom: "20px", columnCount: 2 }}>
+            <input
+              type="checkbox"
+              id="termsAccepted"
+              name="termsAccepted"
+              checked={formData.termsAccepted}
+              onChange={handleChange}
+              required
+              style={{ width: "30px", margin: "0px" }}
+            />
+            <label htmlFor="termsAccepted">I accept the terms and conditions</label>
+          </div>
 
           <button type="submit">Create Account</button>
 
           <div className="checkbox-container">
-            
             <label htmlFor="hasAccount">
               Already have an account? <a href="/login">Log in</a>
             </label>
