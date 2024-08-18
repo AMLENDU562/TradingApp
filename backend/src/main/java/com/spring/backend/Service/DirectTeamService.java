@@ -8,7 +8,7 @@ import java.util.List;
 @Service
 public interface DirectTeamService {
     List<Direct_TeamDto> getAll(Integer id);
-    Boolean delete(Integer Team_id);
+    boolean delete(Integer Team_id);
     Direct_TeamDto getByID(Integer Team_id);
     Direct_TeamDto post(Direct_TeamDto directTeamDto);
 }

@@ -7,13 +7,12 @@ import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
 @Setter
-public class Direct_TeamDto {
-
+@Getter
+public class RewardTeamDto {
     private Integer id;
     private String name;
-    private Float amount;
-    private String commission;
     private Integer employeeId;
+    private Float Amount;
+
 }

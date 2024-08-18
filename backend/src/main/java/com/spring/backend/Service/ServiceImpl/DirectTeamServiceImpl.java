@@ -2,54 +2,84 @@ package com.spring.backend.Service.ServiceImpl;
 
 import com.spring.backend.Dto.Direct_TeamDto;
 import com.spring.backend.Entity.Direct_Team;
+import com.spring.backend.Entity.Employee;
+;
+import com.spring.backend.Exception.DirectTeamException;
 import com.spring.backend.Mapper.Direct_TeamMapper;
 import com.spring.backend.Respository.DirectTeamRespository;
+import com.spring.backend.Respository.EmployeeRepository;
 import com.spring.backend.Service.DirectTeamService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+
 @Service
+@AllArgsConstructor
 public class DirectTeamServiceImpl implements DirectTeamService {
 
-    private final Direct_TeamMapper directTeamMapper;
     private final DirectTeamRespository directTeamRespository;
+    private final EmployeeRepository employeeRepository;
+    private final Direct_TeamMapper directTeamMapper;
 
-    @Autowired
-    public DirectTeamServiceImpl(Direct_TeamMapper directTeamMapper, DirectTeamRespository directTeamRespository) {
-        this.directTeamMapper = directTeamMapper;
-        this.directTeamRespository = directTeamRespository;
-    }
+    public List<Direct_TeamDto> getAll(Integer id) {
+        // Implement your logic here
+        List<Direct_TeamDto>dtos=new ArrayList<>();
+        for (Direct_Team i : directTeamRespository.findByEmployeeId(id))
+        {
+            Direct_TeamDto dto=directTeamMapper.toDto(i);
+            dtos.add(dto);
 
-    @Override
-    public List<Direct_TeamDto> getAll(Integer employeeId) {
-        List<Direct_TeamDto> direct_Teams = new ArrayList<>();
-        for (Direct_Team i : directTeamRespository.findByEmployeeId(employeeId)) {
-            Direct_TeamDto directTeamDto = directTeamMapper.toDto(i);
-            direct_Teams.add(directTeamDto);
         }
-        return direct_Teams;
+        return dtos;
+
     }
 
-    @Override
-    public Direct_TeamDto getByID(Integer Team_Id) {
-        return directTeamMapper.toDto(directTeamRespository.getByTeamId(Team_Id));
+    public Direct_TeamDto getByID(Integer teamId) {
+        Direct_Team directTeam = directTeamRespository.findById(teamId)
+                .orElseThrow(() -> new DirectTeamException("Team not found with id: " + teamId));
+        return directTeamMapper.toDto(directTeam);
     }
 
-    @Override
-    public Boolean delete(Integer Team_id) {
-        if (directTeamRespository.existsByTeamId(Team_id)) {
-            directTeamRespository.deleteById(Team_id);
+
+    public boolean delete(Integer teamId) {
+        if (directTeamRespository.existsById(teamId)) {
+            directTeamRespository.deleteById(teamId);
             return true;
         }
         return false;
     }
 
-    @Override
-    public Direct_TeamDto post(Direct_TeamDto directTeamDto) {
-        Direct_Team directTeam = directTeamMapper.toEntity(directTeamDto);
-        return directTeamMapper.toDto(directTeamRespository.save(directTeam));
+    public Direct_TeamDto post(Direct_TeamDto dto) {
+        Direct_Team directTeam;
+
+        try {
+            directTeam = directTeamMapper.toEntity(dto);
+        } catch (Exception error) {
+            // Log the error for debugging purposes
+            System.err.println("Error converting DTO to entity: " + error.getMessage());
+            // Handle the case where DTO conversion fails
+            throw new DirectTeamException("Failed to convert DTO to entity: " + error.getMessage());
+        }
+
+        // Ensure the employee ID exists
+        try {
+            Employee employee = employeeRepository.findById(dto.getEmployeeId())
+                    .orElseThrow(() -> new DirectTeamException("Employee with ID " + dto.getEmployeeId() + " not found"));
+            directTeam.setEmployee(employee);
+        } catch (Exception e) {
+            // Handle the case where the employee ID does not exist
+            throw new DirectTeamException("Failed to find employee: " + e.getMessage());
+        }
+
+        Direct_Team savedDirectTeam = directTeamRespository.save(directTeam);
+
+        return directTeamMapper.toDto(savedDirectTeam);
     }
+
+
+
 }

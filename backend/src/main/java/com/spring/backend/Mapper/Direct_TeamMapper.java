@@ -23,7 +23,7 @@ public class Direct_TeamMapper {
     public Direct_TeamDto toDto(Direct_Team directTeam) {
         Employee employee = directTeam.getEmployee();
         return new Direct_TeamDto(
-                directTeam.getTeamId(),
+                directTeam.getId(),
                 directTeam.getName(),
                 directTeam.getAmount(),
                 directTeam.getCommission(),
@@ -37,7 +37,7 @@ public class Direct_TeamMapper {
         Employee employee = optionalEmployee.orElseThrow(() -> new RuntimeException("Employee not found"));
 
         return new Direct_Team(
-                dto.getTeamId(),
+                dto.getId(),
                 dto.getName(),
                 dto.getAmount(),
                 dto.getCommission(),

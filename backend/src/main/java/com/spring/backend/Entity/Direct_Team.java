@@ -14,10 +14,9 @@ import lombok.Setter;
 @Table(name = "direct_team") // Explicitly specify the table name
 public class Direct_Team {
 
+    @GeneratedValue(strategy = GenerationType.AUTO) // Use IDENTITY for auto-increment
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Use IDENTITY for auto-increment
-    @Column(name = "team_id") // Explicitly specify the column name
-    private Integer teamId;
+        Integer id;
 
     @Column(name = "name")
     private String name;
@@ -28,7 +27,7 @@ public class Direct_Team {
     @Column(name = "commission")
     private String commission;
 
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}) // Adjust cascade types as needed
-    @JoinColumn(name = "employee_id") // Column in Direct_Team table that references Employee
+    @ManyToOne // Adjust cascade types as needed
+    @JoinColumn(name = "employee_id",unique = false) // Column in Direct_Team table that references Employee
     private Employee employee;
 }
